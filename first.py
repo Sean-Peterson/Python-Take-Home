@@ -9,11 +9,11 @@ import json
 # marital_status = 'single'
 
 
-city = raw_input("Which city do you live in? ")
-state = raw_input("2 letter abbreviation of your state: ")
-income = input("What is your annual income? ")
+city = input("Which city do you live in? ")
+state = input("2 letter abbreviation of your state: ")
+income = int(input("What is your annual income? "))
 def maritals():
-    marital_status = raw_input("single or married? ")
+    marital_status = input("single or married? ")
     marital_status = str(marital_status.lower())
     if marital_status == 'single' or 'married':
         return marital_status
@@ -73,4 +73,4 @@ aiat = int(income-(income*fed_tax_rate)-(income*state_tax_rate))
 # monthly income after taxes
 miat = int(aiat/12)
 
-print "You take home", aiat, "annually after taxes and", miat, "monthly after taxes."
+print ("You take home", aiat, "annually after taxes and", miat, "monthly after taxes.")
