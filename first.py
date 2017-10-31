@@ -1,12 +1,12 @@
 import requests
 import json
 
-#  Test variables
+
+ # Test variables
 # city = 'portland'
 # state = "or"
-# income = 50
+# income = 50000
 # marital_status = 'single'
-
 
 
 city = raw_input("Which city do you live in? ")
@@ -20,12 +20,13 @@ def maritals():
     else:
         pass
 marital_status = maritals()
+
 # break.............................................................................
 
 url = 'https://taxee.io/api/v2/state/2017/%s'%state
 headers = {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJBUElfS0VZX01BTkFHRVIiLCJodHRwOi8vdGF4ZWUuaW8vdXNlcl9pZCI6IjU5MTlmMTlmZTkyMWMwMzY2NjZmMTMxZiIsImh0dHA6Ly90YXhlZS5pby9zY29wZXMiOlsiYXBpIl0sImlhdCI6MTQ5NDg3MjQ3OX0.grP0a9fG_4NdaOaRWk5H-lwG9XOfcgic8eUmhTPF7Tc'}
 decoded = requests.get(url, headers=headers).json()
-state_tax = 0
+state_tax_rate = 0
 
 if 'income_tax_brackets' in decoded[marital_status]:
     tax_brackets = decoded[marital_status]['income_tax_brackets']
@@ -46,18 +47,15 @@ else:
 if tax_brackets == 'none':
     pass
 else:
-    state_tax=.01*(float(decoded[marital_status]['income_tax_brackets'][tax_array_number]['marginal_rate']))
-
-print state_tax
+    state_tax_rate=.01*(float(decoded[marital_status]['income_tax_brackets'][tax_array_number]['marginal_rate']))
 
 # break..............................................................................
 
 url = 'https://taxee.io/api/v2/federal/2017/'
 headers = {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJBUElfS0VZX01BTkFHRVIiLCJodHRwOi8vdGF4ZWUuaW8vdXNlcl9pZCI6IjU5MTlmMTlmZTkyMWMwMzY2NjZmMTMxZiIsImh0dHA6Ly90YXhlZS5pby9zY29wZXMiOlsiYXBpIl0sImlhdCI6MTQ5NDg3MjQ3OX0.grP0a9fG_4NdaOaRWk5H-lwG9XOfcgic8eUmhTPF7Tc'}
 decoded = requests.get(url, headers=headers).json()
-fed_tax = 0
+fed_tax_rate = 0
 no_tax = decoded.get('type', 'Default value')
-
 
 for i in range(0, len(decoded[marital_status]['income_tax_brackets'])):
     if income<decoded[marital_status]['income_tax_brackets'][i]['bracket']:
@@ -66,8 +64,13 @@ for i in range(0, len(decoded[marital_status]['income_tax_brackets'])):
     else:
         tax_array_number=len(decoded[marital_status]['income_tax_brackets'])-1
 
-fed_tax=.01*(float(decoded[marital_status]['income_tax_brackets'][tax_array_number]['marginal_rate']))
-
-print fed_tax
+fed_tax_rate=.01*(float(decoded[marital_status]['income_tax_brackets'][tax_array_number]['marginal_rate']))
 
 # break..........................................................................................
+
+# annual income after taxes
+aiat = int(income-(income*fed_tax_rate)-(income*state_tax_rate))
+# monthly income after taxes
+miat = int(aiat/12)
+
+print "You take home", aiat, "annually after taxes and", miat, "monthly after taxes."
